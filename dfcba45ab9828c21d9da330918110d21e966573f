@@ -1,0 +1,15 @@
+1. `.gitignore` : Created using 'gitignore.io'.
+2. `holdings-XXXXXX.xlsx` : Data downloaded from Zerodha's homepage.
+    - The data has been fabricated to mask the original.
+    - UserID replaced with 'XXXXX' for security reasons.
+    - The structure of the data remains intact.
+3. `Ticker_Info.csv` : Generated using data from 'tickertape.in'.
+    - NAV or current prices will be fetched using Tickertape's open APIs.
+    - Different APIs are used for Mutual Funds and Stocks.
+4. `data.json` : Added for easy visualization of scraped data.
+    - Since data is stored in SQLite,
+        - it's easier to view via `data.json` rather than,
+        - querying directly via SQL or using VS Code extensions.
+    - `data.json` can be easily viewed and formatted using online JSON beautifiers.
+5. `NAV_Scrapper.py` : Optimized to use asynchronous requests.
+    - The async functionality reduces response wait time, making it more scalable for large datasets.
