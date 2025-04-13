@@ -1,0 +1,7 @@
+1. Added environment file for easy replication of the project across different locations.
+2. Created a README file with a detailed project explanation, including:
+    - Features and an overview of the project.
+    - Steps for replicating the project locally.
+    - Automation setup using `cron` for Linux.
+    - Troubleshooting mechanisms and additional notes.
+3. Licensed the project under the MIT License.
