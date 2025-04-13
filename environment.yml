@@ -1,0 +1,10 @@
+name: NAV_Scrapper
+dependencies:
+  - pip=25.0
+  - python=3.13.2
+  - pip:
+      - aiolimiter==1.2.1
+      - asyncio==3.4.3
+      - httpx==0.28.1
+      - pandas==2.2.3
+      - openpyxl==3.1.5
