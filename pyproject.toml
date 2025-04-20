@@ -1,0 +1,12 @@
+[project]
+name = "nav-scrapper"
+version = "0.1.0"
+description = "Scrape latest NAV or closing prices of stocks and MFs."
+readme = "README.md"
+requires-python = "==3.13.2"
+dependencies = [
+    "aiolimiter==1.2.1",
+    "httpx==0.28.1",
+    "openpyxl==3.1.5",
+    "pandas==2.2.3",
+]

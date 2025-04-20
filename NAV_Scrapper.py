@@ -28,9 +28,10 @@ holdings_df = pd.read_excel(holdings_File, sheet_name = 'Combined', skiprows = 2
 holdings_df.loc[holdings_df.Symbol == 'INE01TI01010', 'ISIN'] = 'INE01TI01010'
 holdings_df.loc[holdings_df.Symbol == 'INE01TI01010', 'Symbol'] = 'VPS Lakeshore'
 merged_df = holdings_df.merge(ticer_df, on = 'ISIN')
-merged_df.drop(['Symbol_x', 'Average Price', 'Name'], axis = 1, inplace = True)
+merged_df.drop(['Symbol_x', 'Name'], axis = 1, inplace = True)
 merged_df.rename(columns = {'Symbol_y' : 'Symbol',
-                            'Quantity Available' : 'Quantity'}, inplace = True)
+                            'Quantity Available' : 'Quantity',
+                            'Average Price' : 'Average_Price'}, inplace = True)
 
 async def getClose(client, url, limiter):
     try:
@@ -65,14 +66,14 @@ async def scrapper():
 merged_df['Date'] = DATE
 merged_df['NAV'] = asyncio.run(scrapper())
 
-merged_df = merged_df[['ISIN', 'Symbol', 'Quantity', 'NAV', 'Date']]
+merged_df = merged_df[['ISIN', 'Symbol', 'Quantity', 'Average_Price', 'NAV', 'Date']]
 
 if not TEST:
     with sqlite3.connect(DB_PATH/'folio_NAV.db') as conn:
         merged_df.to_sql(name = 'nav_data', con = conn, if_exists = 'append',
                          index = False, dtype = {'ISIN' : 'TEXT', 'Quantity' : 'REAL',
                                                  'Symbol' : 'TEXT', 'Date' : 'TEXT',
-                                                 'NAV' : 'REAL',})
+                                                 'NAV' : 'REAL', 'Average_Price' : 'REAL'})
 else:
     missing_ = set(holdings_df.ISIN.values) - set(ticer_df.ISIN.values)
     assert len(missing_) == 0, f"Missing tickers are :: {missing_}"
