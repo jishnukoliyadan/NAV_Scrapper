@@ -1,0 +1,35 @@
+1. Environment setup changed from `conda` to 'astral uv'.
+2. `cron` job command modified to use 'uv'.
+3. `Average Price` of each stock/MF was missing in the DB
+    - Added 'Average_Price' using the below python script.
+
+```python
+import sqlite3
+import pandas as pd
+from pathlib import Path
+
+conn = sqlite3.connect('DB_Instance/folio_NAV.db')
+sqld = pd.read_sql("select * from nav_data", conn)
+
+PARENT_DIR = Path(__file__).parent
+DB_PATH = PARENT_DIR / 'DB_Instance'
+
+holdings_df = pd.read_excel('holdings-XXXXXX.xlsx', sheet_name = 'Combined', skiprows = 22,
+                            usecols = ['Symbol', 'ISIN', 'Quantity Available', 'Average Price'])
+holdings_df.loc[holdings_df.Symbol == 'INE01TI01010', 'ISIN'] = 'INE01TI01010'
+holdings_df.loc[holdings_df.Symbol == 'INE01TI01010', 'Symbol'] = 'VPS Lakeshore'
+
+sqld['Average_Price'] = 0.0
+for idx, val in holdings_df.iterrows():
+    _, isin, _, avg = val
+    agv_ = holdings_df.query('ISIN == @isin')['Average Price'].values[0]
+    sqld.loc[sqld.ISIN == isin, 'Average_Price'] = agv_
+
+sqld = sqld[['ISIN', 'Symbol', 'Quantity', 'Average_Price', 'NAV', 'Date']]
+
+with sqlite3.connect(DB_PATH/'folio_NAV.db') as conn:
+    sqld.to_sql(name = 'nav_data', con = conn, if_exists = 'replace',
+                        index = False, dtype = {'ISIN' : 'TEXT', 'Quantity' : 'REAL',
+                                                'Symbol' : 'TEXT', 'Date' : 'TEXT',
+                                                'NAV' : 'REAL', 'Average_Price' : 'REAL'})
+```
